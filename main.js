@@ -40,47 +40,42 @@ function initSliders() {
 function destroySliders() {
     sliders.forEach((swiper) => {
         if (swiper && swiper.initialized) {
-            const el = swiper.el;
-
-            const pagination = el.querySelector(".swiper-pagination");
-            const next = el.querySelector(".swiper-button-next");
-            const prev = el.querySelector(".swiper-button-prev");
-
-            if (pagination) pagination.style.display = "none";
-            if (next) next.style.display = "none";
-            if (prev) prev.style.display = "none";
-
             swiper.destroy(true, true);
         }
     });
     sliders = [];
 }
 
-function showControls() {
-  document.querySelectorAll(".swiper").forEach((el) => {
-    const pagination = el.querySelector(".swiper-pagination");
-    const next = el.querySelector(".swiper-button-next");
-    const prev = el.querySelector(".swiper-button-prev");
+function visibleControls(visible = true) {
+    document.querySelectorAll(".swiper").forEach((el) => {
+        const pagination = el.querySelector(".swiper-pagination");
+        const next = el.querySelector(".swiper-button-next");
+        const prev = el.querySelector(".swiper-button-prev");
 
-    if (pagination) pagination.style.display = "";
-    if (next) next.style.display = "";
-    if (prev) prev.style.display = "";
-  });
+        if (pagination) pagination.style.display = visible ? "" : "none";
+        if (next) next.style.display = visible ? "" : "none";
+        if (prev) prev.style.display = visible ? "" : "none";
+    });
 }
 
 const handleResize = debounce(() => {
     const width = window.innerWidth;
 
     if (width < 1200 && sliders.length) {
+        visibleControls(false);
         destroySliders();
     } else if (width >= 1200 && !sliders.length) {
-        showControls()
+        visibleControls();
         initSliders();
     }
 }, 75);
 
 window.addEventListener("load", () => {
-    if (window.innerWidth >= 1200) initSliders();
+    if (window.innerWidth >= 1200) {
+        initSliders();
+    } else {
+        visibleControls(false);
+    }
 });
 
 window.addEventListener("resize", handleResize);
